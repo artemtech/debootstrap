@@ -3,17 +3,45 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+# Apply patches to the package
+patch: patch-stamp
+patch-stamp:
+	dh_testdir
+	@patches=debian/patches/*.patch; for patch in $$patches; do \
+		test -f $$patch || continue; \
+		echo "Applying $$patch"; \
+		patch -stuN -p1 < $$patch || exit 1; \
+	done
+	touch $@
+
+# Remove patches from the package
+unpatch:
+	dh_testdir
+	@if test -f patch-stamp; then \
+		patches=debian/patches/*.patch; \
+		for patch in $$patches; do \
+			reversepatches="$$patch $$reversepatches"; \
+		done; \
+                for patch in $$reversepatches; do \
+                        test -f $$patch || continue; \
+			echo "Reversing $$patch"; \
+			patch -suRf -p1 < $$patch || exit 1; \
+		done; \
+		rm -f patch-stamp; \
+	fi
+
 configure:
 	dh_testdir
 
-clean:
+clean: clean-source unpatch
+clean-source:
 	dh_testdir
 
 	-$(MAKE) clean
 
 	dh_clean
 
-build: configure
+build: patch-stamp configure
 #	 need to be root to make devices, so build is done in install target
 
 real-build: build
@@ -96,4 +124,4 @@ binary-arch: install
 	dh_builddeb -s
 
 binary: binary-indep binary-arch
-.PHONY: build real-build clean binary-indep binary-arch binary install configure binary-basedebs
+.PHONY: patch unpatch build real-build clean binary-indep binary-arch binary install configure binary-basedebs
