@@ -1,3 +1,9 @@
+debootstrap (1.0.3build1-0blankon1) konde; urgency=low
+
+  * Impor dari 1.0.3build1
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 04 Oct 2007 19:16:22 +0700
+
 debootstrap (1.0.3-0blankon1) konde; urgency=low
 
   * Impor dari 1.0.3
