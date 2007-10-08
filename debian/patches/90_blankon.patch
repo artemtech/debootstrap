@@ -1,6 +1,6 @@
-diff -Nrup old/Makefile new/Makefile
---- old/Makefile	2007-09-29 23:40:56.000000000 +0700
-+++ new/Makefile	2007-09-29 23:41:27.000000000 +0700
+diff -Nurp old/Makefile new/Makefile
+--- old/Makefile	2007-10-08 14:04:42.000000000 +0700
++++ new/Makefile	2007-10-08 14:04:55.000000000 +0700
 @@ -31,6 +31,7 @@ install:
  	mkdir -p $(DESTDIR)/usr/share/man/man8
  	install -o root -g root -m 0644 scripts/debian/* $(DSDIR)/scripts/
@@ -9,13 +9,13 @@ diff -Nrup old/Makefile new/Makefile
  	install -o root -g root -m 0644 functions $(DSDIR)/
  
          # no special script for etch anymore
-diff -Nrup old/scripts/blankon/konde new/scripts/blankon/konde
+diff -Nurp old/scripts/blankon/konde new/scripts/blankon/konde
 --- old/scripts/blankon/konde	1970-01-01 07:00:00.000000000 +0700
-+++ new/scripts/blankon/konde	2007-09-29 23:25:44.000000000 +0700
++++ new/scripts/blankon/konde	2007-10-08 14:04:55.000000000 +0700
 @@ -0,0 +1,183 @@
 +case $ARCH in
 +  amd64|i386|sparc)
-+    default_mirror http://konde-dev.ubuntu-id.org/repo
++    default_mirror http://blankon.ubuntu-id.org/pub/ubuntu
 +    ;;
 +  *)
 +    default_mirror http://konde-dev.ubuntu-id.org/repo

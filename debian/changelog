@@ -1,3 +1,10 @@
+debootstrap (1.0.3build1-0blankon2) konde; urgency=low
+
+  * Hapus gutsy dari blankon
+  * Ubah default mirror ke blankon.ubuntu-id.org
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Mon, 08 Oct 2007 14:16:48 +0700
+
 debootstrap (1.0.3build1-0blankon1) konde; urgency=low
 
   * Impor dari 1.0.3build1
