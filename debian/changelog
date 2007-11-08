@@ -1,3 +1,10 @@
+debootstrap (1.0.3build1-0blankon3) konde; urgency=low
+
+  * Removed 90_blankon.patch
+  * Changed default_mirror in konde script to arsip.b.o.i
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 08 Nov 2007 14:02:31 +0700
+
 debootstrap (1.0.3build1-0blankon2) konde; urgency=low
 
   * Hapus gutsy dari blankon

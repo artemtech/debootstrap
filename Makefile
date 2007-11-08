@@ -31,6 +31,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/man/man8
 	install -o root -g root -m 0644 scripts/debian/* $(DSDIR)/scripts/
 	install -o root -g root -m 0644 scripts/ubuntu/* $(DSDIR)/scripts/
+	install -o root -g root -m 0644 scripts/blankon/* $(DSDIR)/scripts/
 	install -o root -g root -m 0644 functions $(DSDIR)/
 
         # no special script for etch anymore
