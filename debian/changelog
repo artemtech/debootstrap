@@ -1,3 +1,10 @@
+debootstrap (1.0.7-1blankon1) lontara; urgency=low
+
+  * New upstream release (debootstrap-1.0.7)
+  * Makefile: make symlink from konde to lontara
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 13 Dec 2007 21:36:53 +0700
+
 debootstrap (1.0.3build1-0blankon3) konde; urgency=low
 
   * Removed 90_blankon.patch

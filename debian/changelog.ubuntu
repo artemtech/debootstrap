@@ -1,8 +1,56 @@
-debootstrap (1.0.3build1) gutsy; urgency=low
+debootstrap (1.0.7) unstable; urgency=low
 
-  * Trigger rebuild for hppa.
+  * No longer include full devices tarball in udeb.
+  * Also try 'udpkg --print-architecture' when determining the target
+    architecture.
+  * Utility pkgdetails moved from debootstrap-udeb to bootstrap-base so that
+    the udeb can become 'Architecture: all'.
+  * Change /usr/lib/debootstrap to /usr/share/debootstrap. Closes: #430615.
+  * Use tab indentation in debootstrap and functions saving 3kB (relevant for
+    Debian Installer).
+  * Fix various inconsistencies in build scripts.
+  * Fix dpkg-genchanges warning 'missing Priority for source files'.
+  * Update Standards-Version to 3.7.2. No changes needed.
+  * Changes in udeb require base-installer 1.85.
 
- -- LaMont Jones <lamont@ubuntu.com>  Wed, 03 Oct 2007 02:00:13 -0600
+ -- Frans Pop <fjp@debian.org>  Wed, 14 Nov 2007 12:15:45 +0100
+
+debootstrap (1.0.6) unstable; urgency=low
+
+  * Ensure that the target directory exists in check_sane_mount.
+  * Don't ignore 'make clean' errors. (The Makefile is always present.)
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 21 Oct 2007 10:50:59 +0100
+
+debootstrap (1.0.5) unstable; urgency=low
+
+  [ Colin Watson ]
+  * Don't rely on GNU sed's s///I extension (closes: #350583).
+
+  [ Joey Hess ]
+  * Skip the noexec/nodev test when running --print-debs or other operations
+    that do not involve building systems.
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 20 Oct 2007 23:10:34 -0400
+
+debootstrap (1.0.4) unstable; urgency=low
+
+  [ Neil Williams ]
+  * Add --second-stage-target option that allows embedded to test for
+    installations in a chroot on the device (closes: #445157).
+
+  [ Colin Watson ]
+  * Add (Ubuntu) hardy as a symlink to gutsy.
+  * Unmount /lib/init/rw on exit (closes: #391604).
+  * Cope if uncompressed Packages is missing from Release (closes: #402380).
+  * Don't rely on XSI test(1) extensions.
+  * Add support for ssh:/// URLs (thanks, Steffen Joeris; closes: #434893).
+  * Fix Ubuntu hoary and breezy scripts to unmount /dev etc. on exit
+    (closes: #327708).
+  * Emit an error if we cannot create working devices or executables on the
+    target (based on work by Bastian Kleineidam; closes: #233798).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 19 Oct 2007 14:57:37 +0100
 
 debootstrap (1.0.3) unstable; urgency=low
 
