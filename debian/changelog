@@ -2,7 +2,7 @@ debootstrap (1.0.8-1blankon2) gutsy; urgency=low
 
   * Change maintainer
 
- -- Iang <iang@shiro>  Mon, 24 Mar 2008 16:37:32 +0100
+ -- Fajran Iman Rusadi <fajran@gmail.com>  Mon, 24 Mar 2008 16:37:32 +0100
 
 debootstrap (1.0.8-1blankon1) lontara; urgency=low
 
