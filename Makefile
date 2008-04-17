@@ -26,7 +26,6 @@ install:
 	ln -s sid $(DSDIR)/scripts/lenny
 
 	ln -s gutsy $(DSDIR)/scripts/hardy
-	ln -s konde $(DSDIR)/scripts/lontara
 
 	sed 's/@VERSION@/$(VERSION)/g' debootstrap >$(DESTDIR)/usr/sbin/debootstrap
 	chown root:root $(DESTDIR)/usr/sbin/debootstrap
