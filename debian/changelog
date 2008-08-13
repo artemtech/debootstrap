@@ -1,3 +1,9 @@
+debootstrap (1.0.10-0blankon1) meuligoe; urgency=low
+
+  * Perbaharui upstream ke versi 1.0.10
+
+ -- Fajran Iman Rusadi <fajran@gmail.com>  Thu, 14 Aug 2008 00:16:47 +0700
+
 debootstrap (1.0.8-2blankon2) lontara; urgency=low
 
   * Copy script from konde to lontara, instead of just symbolic link
