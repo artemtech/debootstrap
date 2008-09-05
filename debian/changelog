@@ -1,3 +1,10 @@
+debootstrap (1.0.10-0blankon2) meuligoe; urgency=low
+
+  * Makefile: salin script konde jadi meuligoe daripada hanya dengan 
+    membuat symlink (dibutuhkan oleh script pabrik cd).
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Fri, 05 Sep 2008 20:41:30 +0700
+
 debootstrap (1.0.10-0blankon1) meuligoe; urgency=low
 
   * Perbaharui upstream ke versi 1.0.10
