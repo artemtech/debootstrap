@@ -1,3 +1,10 @@
+debootstrap (1.0.10-0blankon3) meuligoe; urgency=low
+
+  * Makefile: perbaikan error di pabrik paket (cp: cannot stat konde: 
+    No such file or directory).
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Fri, 05 Sep 2008 21:20:18 +0700
+
 debootstrap (1.0.10-0blankon2) meuligoe; urgency=low
 
   * Makefile: salin script konde jadi meuligoe daripada hanya dengan 

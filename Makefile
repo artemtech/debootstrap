@@ -29,7 +29,7 @@ install:
 	ln -s gutsy $(DSDIR)/scripts/intrepid
 
 	ln -s konde $(DSDIR)/scripts/lontara
-	cp -a konde $(DSDIR)/scripts/meuligoe
+	cp -a $(DSDIR)/scripts/konde $(DSDIR)/scripts/meuligoe
 
 	sed 's/@VERSION@/$(VERSION)/g' debootstrap >$(DESTDIR)/usr/sbin/debootstrap
 	chown root:root $(DESTDIR)/usr/sbin/debootstrap
