@@ -1,3 +1,10 @@
+debootstrap (1.0.10ubuntu1-0blankon1) nanggar; urgency=low
+
+  * New upstream updates
+  * Makefile: tambah symlink untuk nanggar dari konde.
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Sat, 13 Dec 2008 23:59:27 +0700
+
 debootstrap (1.0.10-0blankon4) meuligoe; urgency=low
 
   * Makefile: kembali ke perubahan sebelumnya (1.0.10-0blankon1), karena 
