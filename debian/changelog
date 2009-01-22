@@ -1,3 +1,11 @@
+debootstrap (1.0.10ubuntu3+blankon1) nanggar; urgency=low
+
+  * New upstream updates:
+    Makefile: Add /dev/console to devices.tar.gz
+  * New BlankOn versioning scheme
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 22 Jan 2009 17:42:22 +0700
+
 debootstrap (1.0.10ubuntu2-0blankon1) nanggar; urgency=low
 
   * New upstream updates: Fix scripts/ubuntu/gutsy.
