@@ -17,8 +17,6 @@ error () {
 		(echo "E: $name"
 		for x in "$@"; do echo "EA: $x"; done
 		echo "EF: $fmt") >&4
-	elif [ "$USE_GETTEXT_INTERACTION" ]; then
-		(printf "E: `LANG=$GETTEXT_LANG gettext debootstrap "$fmt"`\n" "$@") >&4
 	else
 		(printf "E: $fmt\n" "$@") >&4
 	fi
@@ -34,8 +32,6 @@ warning () {
 		(echo "W: $name"
 		for x in "$@"; do echo "WA: $x"; done
 		echo "WF: $fmt") >&4
-	elif [ "$USE_GETTEXT_INTERACTION" ]; then
-		printf "W: `LANG=$GETTEXT_LANG gettext debootstrap "$fmt"`\n" "$@" >&4
 	else
 		printf "W: $fmt\n" "$@" >&4
 	fi
@@ -50,8 +46,6 @@ info () {
 		(echo "I: $name"
 		for x in "$@"; do echo "IA: $x"; done
 		echo "IF: $fmt") >&4
-	elif [ "$USE_GETTEXT_INTERACTION" ]; then
-		printf "I: `LANG=$GETTEXT_LANG gettext debootstrap "$fmt"`\n" "$@" >&4
 	else
 		printf "I: $fmt\n" "$@" >&4
 	fi
@@ -399,7 +393,7 @@ apt_dest () {
 	#   rel suite mirror path
 	case "$1" in
 	    deb)
-		echo "var/cache/apt/archives/${2}_${3}_${4}.deb" | sed 's/:/%3a/'
+		echo "/var/cache/apt/archives/${2}_${3}_${4}.deb" | sed 's/:/%3a/'
 		;;
 	    pkg)
 		local m="$5"
@@ -862,7 +856,7 @@ setup_devices () {
 		setup_devices_hurd ;;
 	    *)
 		if [ -e "$DEVICES_TARGZ" ]; then
-			(cd "$TARGET"; zcat "$DEVICES_TARGZ" | tar -xf -)
+			zcat "$DEVICES_TARGZ" | (cd "$TARGET"; tar -xf -)
 		else
 			if [ -e /dev/.devfsd ] ; then
 				in_target mount -t devfs devfs /dev
@@ -1096,7 +1090,8 @@ without () {
 	echo
 }
 
-repeat () {
+# Formerly called 'repeat', but that's a reserved word in zsh.
+repeatn () {
 	local n="$1"
 	shift
 	while [ "$n" -gt 0 ]; do

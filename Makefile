@@ -24,11 +24,12 @@ install:
 	ln -s sid $(DSDIR)/scripts/etch
 	ln -s sid $(DSDIR)/scripts/etch-m68k
 	ln -s sid $(DSDIR)/scripts/lenny
+	ln -s sid $(DSDIR)/scripts/squeeze
 
 	ln -s gutsy $(DSDIR)/scripts/hardy
 	ln -s gutsy $(DSDIR)/scripts/intrepid
 	ln -s gutsy $(DSDIR)/scripts/jaunty
-
+	
 	ln -s konde $(DSDIR)/scripts/lontara
 	ln -s konde $(DSDIR)/scripts/meuligoe
 	ln -s konde $(DSDIR)/scripts/nanggar

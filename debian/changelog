@@ -1,3 +1,9 @@
+debootstrap (1.0.12+blankon1) nanggar; urgency=low
+
+  * New upstream updates (1.0.12) 
+
+ -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 19 Mar 2009 13:51:38 +0700
+
 debootstrap (1.0.10ubuntu3+blankon1) nanggar; urgency=low
 
   * New upstream updates:
