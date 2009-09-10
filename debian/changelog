@@ -1,3 +1,10 @@
+debootstrap (1.0.13+blankon1) ombilin; urgency=low
+
+  * New upstream for karmic (1.0.13)
+  * Makefile : tambah symlink untuk ombilin dari konde
+
+ -- Muhammad Takdir <muhammad.takdir@gmail.com>  Fri, 11 Sep 2009 06:00:03 +0800
+
 debootstrap (1.0.12+blankon1) nanggar; urgency=low
 
   * New upstream updates (1.0.12) 

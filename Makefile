@@ -29,10 +29,12 @@ install:
 	ln -s gutsy $(DSDIR)/scripts/hardy
 	ln -s gutsy $(DSDIR)/scripts/intrepid
 	ln -s gutsy $(DSDIR)/scripts/jaunty
-	
+	ln -s gutsy $(DSDIR)/scripts/karmic
+
 	ln -s konde $(DSDIR)/scripts/lontara
 	ln -s konde $(DSDIR)/scripts/meuligoe
 	ln -s konde $(DSDIR)/scripts/nanggar
+	ln -s konde $(DSDIR)/scripts/ombilin
 
 	sed 's/@VERSION@/$(VERSION)/g' debootstrap >$(DESTDIR)/usr/sbin/debootstrap
 	chown root:root $(DESTDIR)/usr/sbin/debootstrap
