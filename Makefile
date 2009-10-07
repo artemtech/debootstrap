@@ -1,8 +1,6 @@
 # avoid dpkg-dev dependency; fish out the version with sed
 VERSION := $(shell sed 's/.*(\(.*\)).*/\1/; q' debian/changelog)
 
-ARCH := $(shell dpkg --print-architecture)
-
 MAKEDEV := $(shell if [ -e /dev/MAKEDEV ]; then echo /dev/MAKEDEV; else echo /sbin/MAKEDEV; fi)
 
 all: devices.tar.gz
@@ -30,6 +28,7 @@ install:
 	ln -s gutsy $(DSDIR)/scripts/intrepid
 	ln -s gutsy $(DSDIR)/scripts/jaunty
 	ln -s gutsy $(DSDIR)/scripts/karmic
+	ln -s gutsy $(DSDIR)/scripts/lucid
 
 	ln -s konde $(DSDIR)/scripts/lontara
 	ln -s konde $(DSDIR)/scripts/meuligoe

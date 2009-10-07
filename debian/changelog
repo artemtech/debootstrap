@@ -1,3 +1,10 @@
+debootstrap (1.0.20+blankon1) ombilin; urgency=low
+
+  * New Upstream updates (1.0.20)
+  * Remove unused ARCH variable
+
+ -- Akhmat Safrudin <akhmat.safrudin@gmail.com>  Wed, 07 Oct 2009 19:16:25 +0000
+
 debootstrap (1.0.13+blankon1) ombilin; urgency=low
 
   * New upstream for karmic (1.0.13)

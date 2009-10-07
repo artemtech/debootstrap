@@ -1,3 +1,70 @@
+debootstrap (1.0.20) unstable; urgency=low
+
+  * For recent Ubuntu versions, move $TARGET/sbin/initctl aside in the same
+    way we do start-stop-daemon, so that attempts to control Upstart jobs
+    won't inadvertently affect jobs in the host system.
+  * Rename EXAMPLE section in debootstrap(8) to EXAMPLES (closes: #548458).
+
+ -- Colin Watson <cjwatson@debian.org>  Sun, 04 Oct 2009 21:23:07 +0100
+
+debootstrap (1.0.19) unstable; urgency=low
+
+  * Ignore failures from dpkg --predep-package. It exits 1 if there are no
+    suitable packages available, which isn't an error for us, but in_target
+    complains anyway, so just use in_target_nofail; the termination
+    condition is handled immediately afterwards anyway.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 24 Sep 2009 19:57:05 +0100
+
+debootstrap (1.0.18) unstable; urgency=low
+
+  * Only use dpkg from the chroot, as there is no guarantee dpkg is 
+    available outside of the chroot (d-i installation for example).
+
+ -- Aurelien Jarno <aurel32@debian.org>  Wed, 23 Sep 2009 11:37:01 +0200
+
+debootstrap (1.0.17) unstable; urgency=low
+
+  * Remove boneheaded use of sudo left over from testing (closes: #547949).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 22 Sep 2009 20:10:19 +0100
+
+debootstrap (1.0.16) unstable; urgency=low
+
+  [ Colin Watson ]
+  * Cope with pre-dependencies of included packages that aren't in Priority:
+    required (closes: #487908).
+  * Upgrade to debhelper v7. (Override rules get pretty hairy for this
+    package, so I haven't switched to dh(1).)
+  * Use ports.ubuntu.com as default mirror on sparc for Ubuntu hardy and
+    beyond (LP: #431145).
+  * Add (Ubuntu) lucid as a symlink to gutsy.
+
+  [ Frans Pop ]
+  * Makefile: remove unused ARCH variable.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 21 Sep 2009 16:28:40 +0100
+
+debootstrap (1.0.15) unstable; urgency=low
+
+  * On Linux, clear out /etc/mtab on exit if it's not a symlink. Should fix
+    problems Wouter Verhelst and Martin Michlmayr are seeing with
+    initramfs-tools MODULES=dep, although it probably isn't a perfect
+    solution.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 23 Jul 2009 16:45:00 +0100
+
+debootstrap (1.0.14) unstable; urgency=low
+
+  * Apply patch from Felix Zielcke <fzielcke@z-51.de> to use "dpkg
+    --print-architecture" to avoid deprecation warning. Closes: #531680.
+  * Reference squeeze instead of sarge in manpage. Based on a patch from
+    Geoff Simmons <gsimmons@gsimmons.org>. Closes: #534575.
+  * Apply patch from Riku Voipio <riku.voipio@iki.fi> to add support for
+    scratchbox variant. Closes: #536820.
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 22 Jul 2009 12:34:54 -0300
+
 debootstrap (1.0.13) unstable; urgency=low
 
   [ Otavio Salvador ]
