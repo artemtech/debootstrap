@@ -1,5 +1,3 @@
-test "$FAKECHROOT" = "true" || error 1 FAKECHROOTREQ "This variant requires fakechroot environment to be started"
-
 mirror_style release
 download_style apt
 
@@ -20,9 +18,6 @@ work_out_debs () {
     subst_package () {
         echo "$3" | tr ' ' '\n' | sed "s/^$1$/$2/" | tr '\n' ' '
     }
-
-    required="$required binutils fakechroot"
-    base="$(without_package "binutils" "$base")"
 
     case $ARCH in
         "alpha")
@@ -64,7 +59,7 @@ first_stage_install () {
 
     mkdir -p "$TARGET/var/lib/dpkg"
     : >"$TARGET/var/lib/dpkg/status"
-    : >"$TARGET/var/lib/dpkg/available"
+    echo >"$TARGET/var/lib/dpkg/available"
 
     setup_etc
     if [ ! -e "$TARGET/etc/fstab" ]; then
@@ -72,16 +67,12 @@ first_stage_install () {
         chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
     fi
 
-    setup_devices_fakechroot
+    setup_devices
 
     x_feign_install () {
         local pkg="$1"
         local deb="$(debfor $pkg)"
-        local ver="$(
-            ar -p "$TARGET/$deb" control.tar.gz | zcat |
-                tar -O -xf - control ./control 2>/dev/null |
-                grep -i ^Version: | sed -e 's/[^:]*: *//' | head -n 1
-        )"
+        local ver="$(extract_deb_field "$TARGET/$deb" Version)"
 
         mkdir -p "$TARGET/var/lib/dpkg/info"
 
@@ -105,7 +96,8 @@ second_stage_install () {
 	baseprog="$(($baseprog + ${1:-1}))"
     }
 
-    setup_proc_fakechroot
+    setup_proc
+    in_target /sbin/ldconfig
 
     DEBIAN_FRONTEND=noninteractive
     export DEBIAN_FRONTEND
@@ -125,8 +117,6 @@ second_stage_install () {
     if [ ! -e "$TARGET/etc/localtime" ]; then
         ln -sf /usr/share/zoneinfo/UTC "$TARGET/etc/localtime"
     fi
-
-    install_fakechroot_tools
 
     p; progress $baseprog $bases INSTBASE "Installing base system" #4
     x_core_install $LIBC
@@ -157,7 +147,7 @@ echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/
 
     p; progress $baseprog $bases INSTBASE "Installing base system" #19
     smallyes '' | in_target_failmsg CONF_REQ_FAIL "Failure while configuring required packages." "" dpkg --configure --pending --force-configure-any --force-depends
-    p 10; progress $baseprog $bases INSTBASE "Installing base system" #29 
+    p 10; progress $baseprog $bases INSTBASE "Installing base system" #29
 
     info INSTBASE "Installing base packages..."
 

@@ -1,3 +1,10 @@
+debootstrap (1.0.23+blankon1) ombilin; urgency=low
+
+  * New Upstream Updates (1.0.23)
+  * Separate package with BlankOn debootstrap
+
+ -- Akhmat Safrudin <somat@di.blankon.in>  Fri, 06 Aug 2010 16:16:55 +0700
+
 debootstrap (1.0.20+blankon1) ombilin; urgency=low
 
   * New Upstream updates (1.0.20)

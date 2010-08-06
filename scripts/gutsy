@@ -1,7 +1,25 @@
+case $ARCH in
+  amd64|i386)
+    default_mirror http://archive.ubuntu.com/ubuntu
+    ;;
+  sparc)
+    case $SUITE in
+      gutsy)
+	default_mirror http://archive.ubuntu.com/ubuntu
+	;;
+      *)
+	default_mirror http://ports.ubuntu.com/ubuntu-ports
+	;;
+    esac
+    ;;
+  *)
+    default_mirror http://ports.ubuntu.com/ubuntu-ports
+    ;;
+esac
 mirror_style release
 download_style apt
 finddebs_style from-indices
-variants - buildd fakechroot minbase scratchbox
+variants - buildd fakechroot minbase
 
 if doing_variant fakechroot; then
     test "$FAKECHROOT" = "true" || error 1 FAKECHROOTREQ "This variant requires fakechroot environment to be started"
@@ -9,27 +27,20 @@ fi
 
 case $ARCH in
   alpha|ia64) LIBC="libc6.1" ;;
-  kfreebsd-*) LIBC="libc0.1" ;;
-  hurd-*)     LIBC="libc0.3" ;;
   *)          LIBC="libc6" ;;
 esac
 
 work_out_debs () {
     required="$(get_debs Priority: required)"
 
-    if doing_variant - || doing_variant fakechroot; then 
+    if doing_variant -; then
       #required="$required $(get_debs Priority: important)"
       #  ^^ should be getting debconf here somehow maybe
       base="$(get_debs Priority: important)"
-    elif doing_variant buildd || doing_variant scratchbox; then
+    elif doing_variant buildd; then
       base="$(get_debs Build-Essential: yes)"
-    elif doing_variant minbase; then
+    elif doing_variant fakechroot || doing_variant minbase; then
       base="apt"
-    fi
-
-    if doing_variant fakechroot; then 
-      # ldd.fake needs binutils
-      required="$required binutils"
     fi
 }
 
@@ -38,7 +49,7 @@ first_stage_install () {
 
     mkdir -p "$TARGET/var/lib/dpkg"
     : >"$TARGET/var/lib/dpkg/status"
-    echo >"$TARGET/var/lib/dpkg/available"
+    : >"$TARGET/var/lib/dpkg/available"
 
     setup_etc
     if [ ! -e "$TARGET/etc/fstab" ]; then
@@ -46,11 +57,7 @@ first_stage_install () {
         chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
     fi
 
-    if [ -x "$TARGET/usr/bin/md5sum.textutils" ] && [ \! -e "$TARGET/usr/bin/md5sum" ]; then
-        cp "$TARGET/usr/bin/md5sum.textutils" "$TARGET/usr/bin/md5sum"
-    fi
-
-    if doing_variant fakechroot; then 
+    if doing_variant fakechroot; then
         setup_devices_fakechroot
     else
         setup_devices
@@ -59,11 +66,7 @@ first_stage_install () {
     x_feign_install () {
         local pkg="$1"
         local deb="$(debfor $pkg)"
-        local ver="$(
-            ar -p "$TARGET/$deb" control.tar.gz | zcat |
-                tar -O -xf - control ./control 2>/dev/null |
-                grep -i ^Version: | sed -e 's/[^:]*: *//' | head -n 1
-        )"
+        local ver="$(extract_deb_field "$TARGET/$deb" Version)"
 
         mkdir -p "$TARGET/var/lib/dpkg/info"
 
@@ -87,10 +90,8 @@ second_stage_install () {
 	baseprog="$(($baseprog + ${1:-1}))"
     }
 
-    if doing_variant fakechroot; then 
+    if doing_variant fakechroot; then
 	setup_proc_fakechroot
-    elif doing_variant scratchbox; then
-	true
     else
 	setup_proc
 	in_target /sbin/ldconfig
@@ -113,10 +114,10 @@ second_stage_install () {
     x_core_install dpkg
 
     if [ ! -e "$TARGET/etc/localtime" ]; then
-        ln -sf /usr/share/zoneinfo/UTC "$TARGET/etc/localtime"
+        ln -sf /usr/share/zoneinfo/Etc/UTC "$TARGET/etc/localtime"
     fi
 
-    if doing_variant fakechroot; then 
+    if doing_variant fakechroot; then
 	install_fakechroot_tools
     fi
 
@@ -140,14 +141,17 @@ second_stage_install () {
 
     info UNPACKREQ "Unpacking required packages..."
 
-    exec 7>&1
-
-    smallyes '' | 
-     (repeatn 5 in_target_failmsg UNPACK_REQ_FAIL_FIVE "Failure while unpacking required packages.  This will be attempted up to five times." "" \
-        dpkg --status-fd 8 --force-depends --unpack $(debfor $required) 8>&1 1>&7 || echo EXITCODE $?) |
-     dpkg_progress $baseprog $bases UNPACKREQ "Unpacking required packages" UNPACKING
+    smallyes '' |
+      (repeatn 5 in_target_failmsg UNPACK_REQ_FAIL_FIVE "Failure while unpacking required packages.  This will be attempted up to five times." "" \
+      dpkg --status-fd 8 --force-depends --unpack $(debfor $required) 8>&1 1>&7 |
+      dpkg_progress $baseprog $bases UNPACKREQ "Unpacking required packages" UNPACKING) 7>&1
 
     info CONFREQ "Configuring required packages..."
+
+    if doing_variant fakechroot; then
+	# fix initscripts postinst (no mounting possible, and wrong if condition)
+	sed -i '/dpkg.*--compare-versions/ s/\<lt\>/lt-nl/' "$TARGET/var/lib/dpkg/info/initscripts.postinst"
+    fi
 
     mv "$TARGET/sbin/start-stop-daemon" "$TARGET/sbin/start-stop-daemon.REAL"
     echo \
@@ -156,12 +160,21 @@ echo
 echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/start-stop-daemon"
     chmod 755 "$TARGET/sbin/start-stop-daemon"
 
+    if [ -x "$TARGET/sbin/initctl" ]; then
+      mv "$TARGET/sbin/initctl" "$TARGET/sbin/initctl.REAL"
+      echo \
+"#!/bin/sh
+echo
+echo \"Warning: Fake initctl called, doing nothing\"" > "$TARGET/sbin/initctl"
+      chmod 755 "$TARGET/sbin/initctl"
+    fi
+
     setup_dselect_method apt
 
-    smallyes '' | 
-     (in_target_failmsg CONF_REQ_FAIL "Failure while configuring required packages." "" \
-       dpkg --status-fd 8 --configure --pending --force-configure-any --force-depends 8>&1 1>&7 || echo EXITCODE $?) |
-     dpkg_progress $baseprog $bases CONFREQ "Configuring required packages" CONFIGURING
+    smallyes '' |
+      (in_target_failmsg CONF_REQ_FAIL "Failure while configuring required packages." "" \
+      dpkg --status-fd 8 --configure --pending --force-configure-any --force-depends 8>&1 1>&7 |
+      dpkg_progress $baseprog $bases CONFREQ "Configuring required packages" CONFIGURING) 7>&1
 
     baseprog=0
     bases="$(set -- $base; echo $#)"
@@ -181,19 +194,21 @@ echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/
       done_predeps="$done_predeps $predep"
     done
 
-    smallyes '' | 
-     (repeatn 5 in_target_failmsg INST_BASE_FAIL_FIVE "Failure while installing base packages.  This will be re-attempted up to five times." "" \
-       dpkg --status-fd 8 --force-overwrite --force-confold --skip-same-version --unpack $(debfor $base) 8>&1 1>&7 || echo EXITCODE $?) |
-     dpkg_progress $baseprog $bases UNPACKBASE "Unpacking base system" UNPACKING
+    smallyes '' |
+      (repeatn 5 in_target_failmsg INST_BASE_FAIL_FIVE "Failure while installing base packages.  This will be re-attempted up to five times." "" \
+      dpkg --status-fd 8 --force-overwrite --force-confold --skip-same-version --unpack $(debfor $base) 8>&1 1>&7 |
+      dpkg_progress $baseprog $bases UNPACKBASE "Unpacking base system" UNPACKING) 7>&1
 
     info CONFBASE "Configuring the base system..."
 
     smallyes '' |
-     (repeatn 5 \
-      in_target_failmsg CONF_BASE_FAIL "Failure while configuring base packages." "" \
-      dpkg --status-fd 8 --force-confold --skip-same-version --configure -a 8>&1 1>&7 || echo EXITCODE $?) |
-     dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING
-  
+      (repeatn 5 in_target_failmsg CONF_BASE_FAIL_FIVE "Failure while configuring base packages.  This will be attempted 5 times." "" \
+      dpkg --status-fd 8 --force-confold --skip-same-version --configure -a 8>&1 1>&7 |
+      dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING) 7>&1
+
+    if [ -x "$TARGET/sbin/initctl.REAL" ]; then
+      mv "$TARGET/sbin/initctl.REAL" "$TARGET/sbin/initctl"
+    fi
     mv "$TARGET/sbin/start-stop-daemon.REAL" "$TARGET/sbin/start-stop-daemon"
 
     progress $bases $bases CONFBASE "Configuring base system"
