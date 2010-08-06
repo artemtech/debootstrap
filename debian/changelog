@@ -1,4 +1,4 @@
-debootstrap (1.0.23+blankon1) ombilin; urgency=low
+debootstrap (1.0.23+blankon1) ombilin-updates; urgency=low
 
   * New Upstream Updates (1.0.23)
   * Separate package with BlankOn debootstrap
