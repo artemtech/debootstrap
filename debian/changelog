@@ -1,3 +1,9 @@
+debootstrap (1.0.25ubuntu2+blankon1) pattimura; urgency=low
+
+  * Initial import to pattimura
+
+ -- Abu Azzam <ordinarydot@gmail.com>  Thu, 03 Feb 2011 17:51:10 +0700
+
 debootstrap (1.0.23+blankon1) ombilin-updates; urgency=low
 
   * New Upstream Updates (1.0.23)
@@ -21,7 +27,7 @@ debootstrap (1.0.13+blankon1) ombilin; urgency=low
 
 debootstrap (1.0.12+blankon1) nanggar; urgency=low
 
-  * New upstream updates (1.0.12) 
+  * New upstream updates (1.0.12)
 
  -- Andy Apdhani <imtheface@ubuntu.com>  Thu, 19 Mar 2009 13:51:38 +0700
 
@@ -48,22 +54,22 @@ debootstrap (1.0.10ubuntu1-0blankon1) nanggar; urgency=low
 
 debootstrap (1.0.10-0blankon4) meuligoe; urgency=low
 
-  * Makefile: kembali ke perubahan sebelumnya (1.0.10-0blankon1), karena 
-    script cdimage dapat berjalan dengan baik tanpa menggunakan script 
+  * Makefile: kembali ke perubahan sebelumnya (1.0.10-0blankon1), karena
+    script cdimage dapat berjalan dengan baik tanpa menggunakan script
     meuligoe yang ada di dalam debootstrap.
 
  -- Andy Apdhani <imtheface@ubuntu.com>  Mon, 15 Sep 2008 03:44:59 +0700
 
 debootstrap (1.0.10-0blankon3) meuligoe; urgency=low
 
-  * Makefile: perbaikan error di pabrik paket (cp: cannot stat konde: 
+  * Makefile: perbaikan error di pabrik paket (cp: cannot stat konde:
     No such file or directory).
 
  -- Andy Apdhani <imtheface@ubuntu.com>  Fri, 05 Sep 2008 21:20:18 +0700
 
 debootstrap (1.0.10-0blankon2) meuligoe; urgency=low
 
-  * Makefile: salin script konde jadi meuligoe daripada hanya dengan 
+  * Makefile: salin script konde jadi meuligoe daripada hanya dengan
     membuat symlink (dibutuhkan oleh script pabrik cd).
 
  -- Andy Apdhani <imtheface@ubuntu.com>  Fri, 05 Sep 2008 20:41:30 +0700
@@ -125,3 +131,4 @@ debootstrap (1.0.3-0blankon1) konde; urgency=low
   * Bikin patch script debootstrap untuk konde
 
  -- Andy Apdhani <imtheface@ubuntu.com>  Sun, 30 Sep 2007 01:30:44 +0700
+
