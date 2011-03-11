@@ -1,3 +1,10 @@
+debootstrap (1.0.28ubuntu1+blankon1) pattimura; urgency=low
+
+  * New upstream release (1.0.28.ubuntu)
+  * Marge whit natty
+  
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Fri, 11 Mar 2011 13:10:14 +0700
+
 debootstrap (1.0.25ubuntu2+blankon1) pattimura; urgency=low
 
   * Initial import to pattimura
