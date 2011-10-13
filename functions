@@ -5,6 +5,19 @@ smallyes() {
 	while echo "$YES" 2>/dev/null ; do : ; done
 }
 
+in_path () {
+	local OLD_IFS="$IFS"
+	IFS=":"
+	for dir in $PATH; do
+		if [ -x "$dir/$1" ]; then
+			IFS="$OLD_IFS"
+			return 0
+		fi
+	done
+	IFS="$OLD_IFS"
+	return 1
+}
+
 ############################################################### interaction
 
 error () {
@@ -61,13 +74,10 @@ progress_next () {
 }
 
 wgetprogress () {
-	[ ! "$verbose" ] && QSWITCH="-q"
+	[ ! "$VERBOSE" ] && QSWITCH="-q"
 	local ret=0
 	if [ "$USE_DEBIANINSTALLER_INTERACTION" ] && [ "$PROGRESS_NEXT" ]; then
 		wget "$@" 2>&1 >/dev/null | $PKGDETAILS "WGET%" $PROGRESS_NOW $PROGRESS_NEXT $PROGRESS_END >&3
-		ret=$?
-	elif [ "$USE_BOOTFLOPPIES_INTERACTION" ] && [ "$PROGRESS_NEXT" ]; then
-		wget "$@" 2>&1 >/dev/null | $PKGDETAILS "WGET%" $PROGRESS_NOW $PROGRESS_NEXT $PROGRESS_END "$PROGRESS_WHAT" >&3
 		ret=$?
 	else
 		wget $QSWITCH "$@" 
@@ -90,12 +100,6 @@ progress () {
 		(echo "P: $now $end $name"
 		for x in "$@"; do echo "PA: $x"; done
 		echo "PF: $fmt") >&3
-	elif [ "$USE_BOOTFLOPPIES_INTERACTION" ]; then
-		PROGRESS_NOW="$now"
-		PROGRESS_END="$end"
-		PROGRESS_WHAT="`printf "$fmt" "$@"`"
-		PROGRESS_NEXT=""
-		printf "P: %s %s %s\n" $now $end "$PROGRESS_WHAT" >&3
 	fi
 }
 
@@ -191,6 +195,13 @@ download_style () {
 	esac
 }
 
+keyring () {
+	KEYRING_WANTED="$1"
+	if [ -z "$KEYRING" ] && [ -e "$KEYRING_WANTED" ]; then
+		KEYRING="$KEYRING_WANTED"
+	fi
+}
+
 ########################################################## variant handling
 
 doing_variant () {
@@ -228,11 +239,32 @@ mirror_style () {
 	export DOWNLOAD_DEBS
 }
 
+force_md5 () {
+	DEBOOTSTRAP_CHECKSUM_FIELD=MD5SUM
+	export DEBOOTSTRAP_CHECKSUM_FIELD
+}
+
 verify_checksum () {
 	# args: dest checksum size
 	local expchecksum="$2"
 	local expsize="$3"
-	relchecksum=`sha${SHA_SIZE}sum < "$1" | sed 's/ .*$//'`
+	if [ "$DEBOOTSTRAP_CHECKSUM_FIELD" = "MD5SUM" ]; then
+		if in_path md5sum; then
+			relchecksum=`md5sum < "$1" | sed 's/ .*$//'`
+		elif in_path md5; then
+			relchecksum=`md5 < "$1"`
+		else
+			error 1 SIGCHECK "Cannot check md5sum"
+		fi
+	else
+		if in_path "sha${SHA_SIZE}sum"; then
+			relchecksum=`sha${SHA_SIZE}sum < "$1" | sed 's/ .*$//'`
+		elif in_path "sha${SHA_SIZE}"; then
+			relchecksum=`sha${SHA_SIZE} < "$1"`
+		else
+			error 1 SIGCHECK "Cannot check sha${SHA_SIZE}sum"
+		fi
+	fi
 	relsize=`wc -c < "$1"`
 	if [ "$expsize" -ne "$relsize" ] || [ "$expchecksum" != "$relchecksum" ]; then
 		return 1
@@ -445,7 +477,12 @@ apt_dest () {
 get_release_checksum () {
 	local reldest="$1"
 	local path="$2"
-	sed -n "/^[Sa][Hh][Aa]$SHA_SIZE:/,/^[^ ]/p" < "$reldest" | \
+	if [ "$DEBOOTSTRAP_CHECKSUM_FIELD" = MD5SUM ]; then
+		local match="^[Mm][Dd]5[Ss][Uu][Mm]"
+	else
+		local match="^[Ss][Hh][Aa]$SHA_SIZE:"
+	fi
+	sed -n "/$match/,/^[^ ]/p" < "$reldest" | \
 		while read a b c; do
 			if [ "$c" = "$path" ]; then echo "$a $b"; fi
 		done | head -n 1
@@ -456,7 +493,7 @@ download_release_sig () {
 	local reldest="$2"
 	local relsigdest="$TARGET/$($DLDEST rel "$SUITE" "$m1" "dists/$SUITE/Release.gpg")"
 
-	if [ -n "$KEYRING" ]; then
+	if [ -n "$KEYRING" ] && [ -z "$DISABLE_KEYRING" ]; then
 		progress 0 100 DOWNRELSIG "Downloading Release file signature"
 		progress_next 50
 		get "$m1/dists/$SUITE/Release.gpg" "$relsigdest" nocache ||
@@ -470,6 +507,8 @@ download_release_sig () {
 		(gpgv --status-fd 1 --keyring "$KEYRING" --ignore-time-conflict \
 		 "$relsigdest" "$reldest" || true) | read_gpg_status
 		progress 100 100 DOWNRELSIG "Downloading Release file signature"
+	elif [ -z "$DISABLE_KEYRING" ] && [ -n "$KEYRING_WANTED" ]; then
+		warning KEYRING "Cannot check Release signature; keyring file not available %s" "$KEYRING_WANTED"
 	fi
 }
 
@@ -510,9 +549,9 @@ download_release_indices () {
 		local i=
 		if [ "$normi" != "" ]; then
 			i="$normi"
-		elif [ -x /bin/bunzip2 ] && [ "$bz2i" != "" ]; then
+		elif in_path bunzip2 && [ "$bz2i" != "" ]; then
 			i="$bz2i"
-		elif [ -x /bin/gunzip ] && [ "$gzi" != "" ]; then
+		elif in_path gunzip && [ "$gzi" != "" ]; then
 			i="$gzi"
 		fi
 		if [ "$i" != "" ]; then
@@ -538,11 +577,11 @@ download_release_indices () {
 			ext="$ext $normi ."
 			i="$normi"
 		fi
-		if [ -x /bin/bunzip2 ] && [ "$bz2i" != "" ]; then
+		if in_path bunzip2 && [ "$bz2i" != "" ]; then
 			ext="$ext $bz2i bz2"
 			i="${i:-$bz2i}"
 		fi
-		if [ -x /bin/gunzip ] && [ "$gzi" != "" ]; then
+		if in_path gunzip && [ "$gzi" != "" ]; then
 			ext="$ext $gzi gz"
 			i="${i:-$gzi}"
 		fi
@@ -598,7 +637,7 @@ download_debs () {
 					dloaddebs="$(($dloaddebs + $size))"
 					echo >>$TARGET/debootstrap/debpaths "$p $debdest"
 				else
-					warning COULDNTDL "Couldn't download package %s" "$p"
+					warning COULDNTDL "Couldn't download package %s (ver %s arc %s)" "$p" "$ver" "$arc"
 				fi
 			fi
 		done
@@ -676,7 +715,7 @@ download_main_indices () {
 	    for c in $COMPONENTS; do
 		local path="dists/$SUITE/$c/binary-$ARCH/Packages"
 		local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m" "$path")"
-		if [ -x /bin/gunzip ] && get "$m/${path}.gz" "${pkgdest}.gz"; then
+		if in_path gunzip && get "$m/${path}.gz" "${pkgdest}.gz"; then
 			rm -f "$pkgdest"
 			gunzip "$pkgdest.gz"
 		elif get "$m/$path" "$pkgdest"; then
@@ -779,7 +818,7 @@ extract_ar_deb_data () {
 	if type $cat_cmd >/dev/null 2>&1; then
 		ar -p "$pkg" "$tarball" | $cat_cmd | tar -xf -
 	else
-		error 1 UNPACKCMDUNVL "The $cat_cmd is not available on the system"
+		error 1 UNPACKCMDUNVL "The $cat_cmd command is not available on the system"
 	fi
 }
 
@@ -904,7 +943,7 @@ UMOUNT_DIRS=
 
 umount_exit_function () {
 	for dir in $UMOUNT_DIRS; do
-		umount "$TARGET/${dir#/}" || true
+		( cd / ; umount "$TARGET/${dir#/}" ) || true
 	done
 }
 
@@ -924,14 +963,18 @@ clear_mtab () {
 }
 
 setup_proc () {
-	case "$ARCH" in
-	    kfreebsd-*)
+	case "$HOST_OS" in
+	    *freebsd*)
 		umount_on_exit /dev
 		umount_on_exit /proc
 		umount "$TARGET/proc" 2>/dev/null || true
-		in_target mount -t linprocfs proc /proc
+		if [ "$HOST_OS" = kfreebsd ]; then
+			in_target mount -t linprocfs proc /proc
+		else
+			mount -t linprocfs proc $TARGET/proc
+		fi
 		;;
-	    hurd-*)
+	    hurd*)
 		;;
 	    *)
 		umount_on_exit /dev/pts
@@ -958,10 +1001,17 @@ setup_proc_fakechroot () {
 }
 
 setup_devices () {
-	case "$ARCH" in
-	    kfreebsd-*)
+	if doing_variant fakechroot; then
+		setup_devices_fakechroot
+		return 0
+	fi
+
+	case "$HOST_OS" in
+	    kfreebsd*)
 		in_target mount -t devfs devfs /dev ;;
-	    hurd-*)
+	    freebsd)
+		mount -t devfs devfs $TARGET/dev ;;
+	    hurd*)
 		setup_devices_hurd ;;
 	    *)
 		if [ -e "$DEVICES_TARGZ" ]; then
@@ -1009,7 +1059,7 @@ setup_dselect_method () {
 # For the debootstrap udeb, pkgdetails is provided by the bootstrap-base
 # udeb, so the pkgdetails API needs to be kept in sync with that.
 
-if [ -x /usr/bin/perl ]; then
+if in_path perl; then
 	PKGDETAILS=pkgdetails_perl
 
 	pkgdetails_field () {
@@ -1027,7 +1077,7 @@ while (<STDIN>) {
 		$ver = $v if ($f eq "version:");
 		$arc = $v if ($f eq "architecture:");
 		$fil = $v if ($f eq "filename:");
-		$chk = $v if ($f eq lc($ENV{DEBOOTSTRAP_CHECKSUM_FIELD}).":");
+		$chk = $v if (lc $f eq lc($ENV{DEBOOTSTRAP_CHECKSUM_FIELD}).":");
 		$siz = $v if ($f eq "size:");
 		$val = $v if ($f eq $field);
 	} elsif (/^$/) {
@@ -1124,19 +1174,24 @@ fi
 resolve_deps () {
 	local m1="${MIRRORS%% *}"
 
-	# XXX: I can't think how to deal well with dependency resolution and
-	#      lots of Packages files. -- aj 2005/06/12
-
-	c="${COMPONENTS%% *}"
-	local path="dists/$SUITE/$c/binary-$ARCH/Packages"
-	local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
-
 	local PKGS="$*"
 	local ALLPKGS="$PKGS";
 	local ALLPKGS2="";
 	while [ "$PKGS" != "" ]; do
-		PKGS=$("$PKGDETAILS" GETDEPS "$pkgdest" $PKGS)
-		PKGS=$("$PKGDETAILS" PKGS REAL "$pkgdest" $PKGS | sed -n 's/ .*REAL.*$//p')
+		local NEWPKGS=""
+		for c in $COMPONENTS; do
+			local path="dists/$SUITE/$c/binary-$ARCH/Packages"
+			local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
+			NEWPKGS="$NEWPKGS $("$PKGDETAILS" GETDEPS "$pkgdest" $PKGS)"
+		done
+		PKGS=$(echo "$PKGS $NEWPKGS" | tr ' ' '\n' | sort | uniq)
+		local REALPKGS=""
+		for c in $COMPONENTS; do
+			local path="dists/$SUITE/$c/binary-$ARCH/Packages"
+			local pkgdest="$TARGET/$($DLDEST pkg "$SUITE" "$c" "$ARCH" "$m1" "$path")"
+			REALPKGS="$REALPKGS $("$PKGDETAILS" PKGS REAL "$pkgdest" $PKGS | sed -n 's/ .*REAL.*$//p')"
+		done
+		PKGS="$REALPKGS"
 		ALLPKGS2=$(echo "$PKGS $ALLPKGS" | tr ' ' '\n' | sort | uniq)
 		PKGS=$(without "$ALLPKGS2" "$ALLPKGS")
 		ALLPKGS="$ALLPKGS2"
@@ -1174,8 +1229,8 @@ get_next_predep () {
 check_sane_mount () {
 	mkdir -p "$1"
 
-	case "$ARCH" in
-	    kfreebsd-*|hurd-*)
+	case "$HOST_OS" in
+	    *freebsd*|hurd*)
 		;;
 	    *)
 		mknod "$1/test-dev-null" c 1 3 || return 1
@@ -1271,6 +1326,10 @@ on_exit () {
 ############################################################## fakechroot tools
 
 install_fakechroot_tools () {
+	if [ "$VARIANT" = "fakechroot" ]; then
+		export PATH=/usr/sbin:/sbin:$PATH
+	fi
+
 	mv "$TARGET/sbin/ldconfig" "$TARGET/sbin/ldconfig.REAL"
 	echo \
 "#!/bin/sh
