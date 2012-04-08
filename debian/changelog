@@ -1,8 +1,37 @@
-debootstrap (1.0.37blankon1) rote; urgency=low
+debootstrap (1.0.39blankon1) rote; urgency=low
 
-  * Add (blankon) rote at symlynk to ombilin
-  
- -- Rahman Yusri Aftian <aftian@di.blankon.in>  Thu, 13 Oct 2011 15:38:06 +0700
+  * scripts/
+    - lontara, meulioge, nanggar, ombilin, pattimura, rote
+  * control: Maintainer
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Sun, 08 Apr 2012 02:15:35 +0000
+
+debootstrap (1.0.39) unstable; urgency=low
+
+  * Retry corrupted downloads rather than carrying on almost regardless.
+    Patch mostly due to Michael Gilbert, rearranged somewhat by me (closes:
+    #618920).
+  * Stop at the end of the retrieval phase if any packages failed to
+    download.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 13 Mar 2012 17:21:13 +0000
+
+debootstrap (1.0.38) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Improve error message when a decompressor is not available, 
+    to indicate which package has been built with bzip today.
+    Closes: #644719
+
+  [ Otavio Salvador ]
+  * Fix --print-debs support when using --foreign param. Closes:
+    #551837.
+
+  [ Colin Watson ]
+  * pkgdetails_perl: Use the last of a sequence of stanzas for the same
+    package name, rather than the first (closes: #649319).
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 21 Nov 2011 13:20:53 +0000
 
 debootstrap (1.0.37) unstable; urgency=low
 
