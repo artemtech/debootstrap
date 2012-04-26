@@ -1,3 +1,22 @@
+debootstrap (1.0.40blankon1) rote; urgency=low
+
+  * New Upstream release.
+  * Merge whit debian sid
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Fri, 27 Apr 2012 05:33:26 +0700
+
+debootstrap (1.0.40) unstable; urgency=low
+
+  [ Joey Hess ]
+  * When installation or configuration of a package fails, output a message
+    that points the user to the log file. Attempt to grep out the first 
+    package that dpkg failed on and show its name too. Closes: #472704
+
+  [ Colin Watson ]
+  * Add (Ubuntu) quantal as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 26 Apr 2012 17:44:44 +0100
+
 debootstrap (1.0.39blankon2) rote; urgency=low
 
   * debian/rules added blankon-keyring
