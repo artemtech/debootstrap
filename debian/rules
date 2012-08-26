@@ -1,7 +1,7 @@
 #! /usr/bin/make -f
 
-ifeq (0,$(shell dpkg-vendor --derives-from BlankOn; echo $$?))
-  KEYRING := blankon-keyring
+ifeq (0,$(shell dpkg-vendor --derives-from Ubuntu; echo $$?))
+  KEYRING := ubuntu-keyring
 else
   KEYRING := debian-archive-keyring
 endif
