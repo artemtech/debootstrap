@@ -1,3 +1,51 @@
+debootstrap (1.0.46blankon1) rote-updates; urgency=low
+
+  * New upstream release.
+  * Added scripts/suroboyo
+  * Generated debian/rules/  *blankon-scripts
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Mon, 21 Jan 2013 07:20:41 +0700
+
+debootstrap (1.0.46) unstable; urgency=low
+
+  * Team upload.
+  * Use `which` to find out sh only if /bin/sh does not exist.
+
+ -- Samuel Thibault <sthibault@debian.org>  Thu, 27 Dec 2012 15:47:16 +0100
+
+debootstrap (1.0.45) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Better support use on Android by not hardcoding /bin/sh
+    in a test file that's created, and instead putting in the
+    actual path to sh. Closes: #694310 Thanks, Shawn Landden
+
+ -- Christian Perrier <bubulle@debian.org>  Sat, 22 Dec 2012 12:56:32 +0100
+
+debootstrap (1.0.44) unstable; urgency=low
+
+  * Remove double quotes to fix for loop on GNU/kFreeBSD, thanks to
+    Oleg Ginzburg (Closes: #693718).
+
+ -- Cyril Brulebois <kibi@debian.org>  Tue, 20 Nov 2012 23:55:53 +0100
+
+debootstrap (1.0.43) unstable; urgency=low
+
+  [ Joey Hess ]
+  * Fix "arc" typo. Closes: #686680
+
+  [ Colin Watson ]
+  * Add (Ubuntu) raring as a symlink to gutsy.
+
+  [ Christian Perrier ]
+  * Add myself to Uploaders and drop Anthony Towns who is no
+    longer active in debootstrap maintenance for a few years. Thanks
+    for your work, Anthony.
+  * Bump Standards to 3.9.3 (checked)
+  * Replace XC-Package-Type by Package-Type in debian/control
+
+ -- Christian Perrier <bubulle@debian.org>  Sat, 27 Oct 2012 12:46:46 +0200
+
 debootstrap (1.0.42blankon1) rote-updates; urgency=low
 
   * Merge whit sid

@@ -1,6 +1,6 @@
 #! /usr/bin/make -f
 
-ifeq (0,$(shell dpkg-vendor --derives-from BlankOn; echo $$?))
+ifeq (0,$(shell dpkg-vendor --derives-from Ubuntu; echo $$?))
   KEYRING := blankon-keyring
 else
   KEYRING := debian-archive-keyring
@@ -32,7 +32,14 @@ override_dh_auto_install:
 		debian/debootstrap-udeb/usr/share/debootstrap/scripts/*.fakechroot \
 		debian/debootstrap-udeb/usr/share/debootstrap/scripts/stable \
 		debian/debootstrap-udeb/usr/share/debootstrap/scripts/testing \
-		debian/debootstrap-udeb/usr/share/debootstrap/scripts/unstable
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/unstable \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/lontara \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/meuligoe \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/nanggar \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/ombilin \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/pattimura \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/rote \
+		debian/debootstrap-udeb/usr/share/debootstrap/scripts/suroboyo 
 
 override_dh_gencontrol:
 	dh_gencontrol -- -Vkeyring=$(KEYRING)
