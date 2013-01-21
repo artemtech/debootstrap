@@ -1,3 +1,9 @@
+debootstrap (1.0.46blankon2) suroboyo; urgency=low
+
+  * Upload to suroboyo
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Mon, 21 Jan 2013 07:25:38 +0700
+
 debootstrap (1.0.46blankon1) rote-updates; urgency=low
 
   * New upstream release.
