@@ -1,3 +1,70 @@
+debootstrap (1.0.52blankon1) suroboyo; urgency=low
+
+  * New Uptream Release 
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Fri, 12 Jul 2013 22:36:49 +0000
+
+debootstrap (1.0.52) unstable; urgency=low
+
+  * scripts/gutsy: Make the fake initctl pass through "initctl version"
+    calls, used by such things as invoke-rc.d to figure out whether it's
+    running under Upstart (LP: #1182540).
+  * scripts/sid, scripts/gutsy: Add a policy-rc.d, matching that in
+    debian-installer-utils.  This is the primary way to disable daemon
+    startup.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 22 May 2013 16:55:59 +0100
+
+debootstrap (1.0.51) unstable; urgency=low
+
+  [ Scott Kitterman ]
+  * Add (Ubuntu) saucy as a symlink to gutsy (closes: #706989).
+
+  [ Colin Watson ]
+  * Clarify location of pkgdetails.c in error message (closes: #708771).
+  * Resolve mount point symlinks relative to the target chroot before
+    unmounting them (closes: #702861, #703037, #704744).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 18 May 2013 23:18:08 +0100
+
+debootstrap (1.0.50) unstable; urgency=low
+
+  [ Hector Oron ]
+  * Report package version information on package retrieve and validation.
+    Closes: #697675
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 17 May 2013 13:34:34 +0200
+
+debootstrap (1.0.49) unstable; urgency=medium
+
+  * Add support for jessie. Closes: #706788
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 04 May 2013 23:37:52 -0400
+
+debootstrap (1.0.48) unstable; urgency=low
+
+  * Team upload
+
+  [ Julien Cristau ]
+  * Disable InRelease support.  gpgv won't give us back the signed data, and
+    full gpg is not available inside d-i (closes: #703889).
+  * Move extract_release_components to after signature verification.
+    Suggested by Ansgar Burchardt.
+
+ -- Didier Raboud <odyx@debian.org>  Thu, 04 Apr 2013 16:17:57 +0200
+
+debootstrap (1.0.47) unstable; urgency=low
+
+  * Team upload
+  * Properly decrypt the InRelease file when downloading from an archive
+    where InRelease is used. This longstanding bug was masked by former
+    APT behaviour and was revealed only with recent APT versions
+    Closes: #703146
+    Thanks to Michael Vogt for the analysis and patch
+  * Add a dependency on gpg because of the above change.
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 20 Mar 2013 21:34:29 +0100
+
 debootstrap (1.0.46blankon2) suroboyo; urgency=low
 
   * Upload to suroboyo
