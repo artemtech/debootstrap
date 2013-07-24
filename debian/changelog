@@ -1,3 +1,21 @@
+debootstrap (1.0.53blankon1) suroboyo; urgency=low
+
+  * New Upstream Release 
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Thu, 25 Jul 2013 05:09:47 +0700
+
+debootstrap (1.0.53) unstable; urgency=low
+
+  [ Dmitrijs Ledkovs ]
+  * Set debian source format to '3.0 (native)'.
+  * Bump debhelper compat level to 9.
+  * Set Vcs-* to canonical format.
+
+  [ Christian Perrier ]
+  * Update Standards to 3.9.4 (checked)
+
+ -- Christian Perrier <bubulle@debian.org>  Sun, 14 Jul 2013 13:06:33 +0200
+
 debootstrap (1.0.52blankon1) suroboyo; urgency=low
 
   * New Uptream Release 
