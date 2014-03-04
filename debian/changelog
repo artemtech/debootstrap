@@ -1,8 +1,8 @@
-debootstrap (1.0.59blankon0.9.0.1) suroboyo-updates; urgency=low
+debootstrap (1.0.59blankon0.8.0.1) ombilin-updates; urgency=low
 
   * Add tambora 
 
- -- Rahman Yusri Aftian <aftian@di.blankon.in>  Tue, 04 Mar 2014 11:47:58 +0700
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Tue, 04 Mar 2014 11:53:44 +0700
 
 debootstrap (1.0.59) unstable; urgency=medium
 
