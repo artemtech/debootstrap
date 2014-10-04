@@ -2,7 +2,7 @@ debootstrap (1.0.63blankon1) tambora; urgency=low
 
   * New Upstream release 
 
- -- Rahman Yusri Aftian <aftian@localhost>  Sat, 04 Oct 2014 22:45:23 +0000
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Sat, 04 Oct 2014 22:45:23 +0700
 
 debootstrap (1.0.63) unstable; urgency=medium
 
