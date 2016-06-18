@@ -1,3 +1,194 @@
+debootstrap (1.0.81blankon1) tambora; urgency=medium
+
+  * New Upstream Release 
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Sat, 18 Jun 2016 18:23:45 +0700
+
+debootstrap (1.0.81) unstable; urgency=medium
+
+  [ Luca Falavigna ]
+  * Add (Ubuntu) yakkety as a symlink to gutsy.
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 03 May 2016 06:51:57 +0200
+
+debootstrap (1.0.80) unstable; urgency=medium
+
+  [ Jon Boden ]
+  * scripts/gutsy: Support kfreebsd & hurd arches on Ubuntu targets
+    (closes: #818748)
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 22 Mar 2016 19:27:45 +0100
+
+debootstrap (1.0.79) unstable; urgency=medium
+
+  [ Samuel Thibault ]
+  * hurd: move setting up dev and servers firmlink to setup_proc stage. Also
+    firmlink proc there.  Thanks Gabriele Giacone for all the investigation!
+    (Closes: #768102)
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 19 Feb 2016 07:23:59 +0100
+
+debootstrap (1.0.78+nmu1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Split setup_devices in setup_devices (which now only deals with static
+    device nodes) and setup_dynamic_devices, and move the calls to
+    setup_devices from the beginning of the second stage to the end of the
+    first stage.
+    setup_dynamic_devices mounts the appropriate filesystems which provide
+    dynamic device nodes for the architectures which need one in
+    debootstrap (kfreebsd and hurd).
+    This fixes a bug in --second-stage introduced in 1.0.34 and exposed
+    by the devices-related changes of 1.0.76: the second stage debootstrap
+    runs "dpkg --print-architecture >/dev/null" at the very beginning of
+    the program when /dev is still empty, so it creates an empty regular
+    file in place of /dev/null and this will cause mknod to fail later.
+    (Closes: #813232)
+
+ -- Marco d'Itri <md@linux.it>  Wed, 17 Feb 2016 01:23:23 +0100
+
+debootstrap (1.0.78) unstable; urgency=high
+
+  * Use HTTPS for Vcs-* URLs, and link to cgit rather than gitweb.
+  * Don't call mknod with the --mode option, it's not supported in
+    busybox. Use -m instead - fixes the broken fix for #812811.
+    Closes: #813124. Urgency high to get this fix propagated quickly -
+    it's breaking d-i installs right now. Adding myself to uploaders and
+    uploading.
+
+ -- Steve McIntyre <93sam@debian.org>  Fri, 29 Jan 2016 16:36:00 +0000
+
+debootstrap (1.0.77) unstable; urgency=medium
+
+  [ Marco d'Itri ]
+  * Fix permissions on device nodes (Closes: #812811).
+
+ -- Cyril Brulebois <kibi@debian.org>  Wed, 27 Jan 2016 20:22:05 +0100
+
+debootstrap (1.0.76) unstable; urgency=medium
+
+  [ Marco d'Itri ]
+  * Stop creating useless device nodes (Closes: #571136).
+
+ -- Cyril Brulebois <kibi@debian.org>  Sun, 24 Jan 2016 08:55:18 +0100
+
+debootstrap (1.0.75) unstable; urgency=medium
+
+  * Stop cleaning KEEP_DEBOOTSTRAP_DIR twice, as spotted by Chris Lamb
+    (Closes: #804415).
+  * Add Tanglu support (Closes: #771687), thanks to Matthias Klumpp. At
+    the moment, the following extra suites are recognized:
+     - aequorea
+     - bartholomea
+     - chromodoris
+     - dasyatis
+
+ -- Cyril Brulebois <kibi@debian.org>  Wed, 11 Nov 2015 18:49:28 +0100
+
+debootstrap (1.0.74) unstable; urgency=medium
+
+  [ Colin Watson ]
+  * Add (Ubuntu) xenial as a symlink to gutsy.
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 03 Nov 2015 07:09:23 +0100
+
+debootstrap (1.0.73) unstable; urgency=medium
+
+  * Generate a deburis file with (package, version, uri) tuples, similar
+    to the existing debpaths.
+
+ -- Cyril Brulebois <kibi@debian.org>  Thu, 22 Oct 2015 12:43:35 +0200
+
+debootstrap (1.0.72) unstable; urgency=medium
+
+  [ Iain Lane ]
+  * Add (Ubuntu) wily as a symlink to gutsy (closes: #787117).
+
+  [ Colin Watson ]
+  * Fix resolve_deps and setup_available to work in the --foreign case
+    (closes: #757819, LP: #1450980).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 28 Jul 2015 14:32:19 +0100
+
+debootstrap (1.0.71) unstable; urgency=medium
+
+  * Adjust sed call to render it more portable (missing ';'), making it
+    work with FreeBSD sed. Thanks to Nikolai Lifanov for the report and
+    the patch (Closes: #791802).
+
+ -- Cyril Brulebois <kibi@debian.org>  Fri, 10 Jul 2015 01:29:52 +0200
+
+debootstrap (1.0.70) unstable; urgency=medium
+
+  * Use tr instead of (missing in d-i) xargs (Closes: #785693). Thanks,
+    Julian Schauder!
+
+ -- Cyril Brulebois <kibi@debian.org>  Tue, 19 May 2015 11:38:27 +0200
+
+debootstrap (1.0.69) unstable; urgency=medium
+
+  [ Cyril Brulebois ]
+  * Make sure to deduplicate package list in download_release to avoid
+    issues while counting downloaded packages. The failure path could lead
+    to printing some strange integer (Closes: #709751, #768445, #785276,
+    #774752).
+    This was reported to mostly happen whenever --no-resolve-deps is used.
+  * Add support for --force-check-gpg so that one can programmatically
+    make sure keyring checks are used and that no fallback to an https
+    mirror happens (Closes: #661501, #733179, #775454).
+  * Switch default mirror from ftp.us.debian.org to the new, official
+    http redirector service: httpredir.debian.org
+  * Make it possible to override the MAKEDEV variable (Closes: #734743).
+    Thanks, Wookey!
+
+  [ Christian Perrier ]
+  * Update Standards to 3.9.6 (checked)
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 18 May 2015 14:07:43 +0200
+
+debootstrap (1.0.68) unstable; urgency=medium
+
+  [ Steven Chamberlain ]
+  * Support the jessie-kfreebsd suite, by using the same script as
+    jessie (a symlink to sid) (Closes: #784927).
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 11 May 2015 07:46:19 +0200
+
+debootstrap (1.0.67) unstable; urgency=medium
+
+  [ Cyril Brulebois ]
+  * Apply patch by Jérémy Bobbio to support reproducible builds: specify
+    a modification time on the tar side, and add the -n option to gzip
+    (Closes: #774069). Thanks, Jérémy!
+  * Update setup_apt_sources to look at USE_COMPONENTS if COMPONENTS is
+    empty, fixing the empty sources.list bug with foreign architectures
+    (Closes: #732255, #773867).
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 14 Jan 2015 07:03:17 +0100
+
+debootstrap (1.0.66) unstable; urgency=low
+
+  [ Cyril Brulebois ]
+  * Specify gzip compression in debian/source/options to allow for better
+    portability on other platforms (Closes: #770214). Thanks, Joey Hess!
+  * Specify gzip compression for debootstrap, and xz for debootstrap-udeb,
+    to mitigate the need for xz on non-Debian platforms (see: #770217).
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 24 Nov 2014 09:15:50 +0100
+
+debootstrap (1.0.65) unstable; urgency=medium
+
+  [ Julien Cristau ]
+  * Add support for stretch.
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 10 Nov 2014 09:24:56 +0100
+
+debootstrap (1.0.64) unstable; urgency=medium
+
+  * Add (Ubuntu) vivid as a symlink to gutsy.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 20 Oct 2014 16:48:49 +0100
+
 debootstrap (1.0.63blankon1) tambora; urgency=low
 
   * New Upstream release 
