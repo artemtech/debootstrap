@@ -1,6 +1,12 @@
+debootstrap (1.0.81blankon2) tambora; urgency=medium
+
+  * Fix resolve_deps and setup_available to work in the --foreign case
+
+ -- Mahyuddin <yudi.al@gmail.com>  Wed, 31 Aug 2016 12:47:25 +0700
+
 debootstrap (1.0.81blankon1) tambora; urgency=medium
 
-  * New Upstream Release 
+  * New Upstream Release
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Sat, 18 Jun 2016 18:23:45 +0700
 
@@ -191,7 +197,7 @@ debootstrap (1.0.64) unstable; urgency=medium
 
 debootstrap (1.0.63blankon1) tambora; urgency=low
 
-  * New Upstream release 
+  * New Upstream release
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Sat, 04 Oct 2014 22:45:23 +0700
 
@@ -231,7 +237,7 @@ debootstrap (1.0.60) unstable; urgency=medium
 
 debootstrap (1.0.59blankon1) tambora; urgency=low
 
-  * Add tambora 
+  * Add tambora
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Tue, 04 Mar 2014 11:54:40 +0700
 
@@ -266,7 +272,7 @@ debootstrap (1.0.57) unstable; urgency=medium
 
 debootstrap (1.0.56blankon1) suroboyo; urgency=low
 
-  * New Upstream Release 
+  * New Upstream Release
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Wed, 15 Jan 2014 23:08:53 +0700
 
@@ -297,7 +303,7 @@ debootstrap (1.0.55) unstable; urgency=low
 
 debootstrap (1.0.53blankon1) suroboyo; urgency=low
 
-  * New Upstream Release 
+  * New Upstream Release
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Thu, 25 Jul 2013 05:09:47 +0700
 
@@ -315,7 +321,7 @@ debootstrap (1.0.53) unstable; urgency=low
 
 debootstrap (1.0.52blankon1) suroboyo; urgency=low
 
-  * New Uptream Release 
+  * New Uptream Release
 
  -- Rahman Yusri Aftian <aftian@di.blankon.in>  Fri, 12 Jul 2013 22:36:49 +0000
 
@@ -461,7 +467,7 @@ debootstrap (1.0.40) unstable; urgency=low
 
   [ Joey Hess ]
   * When installation or configuration of a package fails, output a message
-    that points the user to the log file. Attempt to grep out the first 
+    that points the user to the log file. Attempt to grep out the first
     package that dpkg failed on and show its name too. Closes: #472704
 
   [ Colin Watson ]
@@ -496,7 +502,7 @@ debootstrap (1.0.39) unstable; urgency=low
 debootstrap (1.0.38) unstable; urgency=low
 
   [ Joey Hess ]
-  * Improve error message when a decompressor is not available, 
+  * Improve error message when a decompressor is not available,
     to indicate which package has been built with bzip today.
     Closes: #644719
 
@@ -630,7 +636,7 @@ debootstrap (1.0.28) unstable; urgency=low
   [ Joey Hess ]
   * Remove 5 second sleeps when debootstrap finds additional required
     dependencies. d-i just got that much faster.
-  * Use SHA checksums. Defaulting to SHA256, and configurable by 
+  * Use SHA checksums. Defaulting to SHA256, and configurable by
     SHA_SIZE environment variable. Closes: #614315
   * If a sha256sum program is not available, fall back to sha1sum.
     This is to support debootstrap use on embedded systems, which are more
@@ -644,7 +650,7 @@ debootstrap (1.0.27) unstable; urgency=low
 
   [ Miguel Figueiredo ]
   * Fix bug and typo on --private-key
-    Patch by Jonathan Klee. 
+    Patch by Jonathan Klee.
 
   [ Jeremie Koenig ]
   * Hurd support:
@@ -680,7 +686,7 @@ debootstrap (1.0.25) unstable; urgency=low
 debootstrap (1.0.24) unstable; urgency=low
 
   [ Miguel Figueiredo ]
-  * Apply patches from by Jonathan Klee and Guillaume Chauvel 
+  * Apply patches from by Jonathan Klee and Guillaume Chauvel
     to add support to https (closes: #521196).
 
   [ Colin Watson ]
@@ -766,7 +772,7 @@ debootstrap (1.0.19) unstable; urgency=low
 
 debootstrap (1.0.18) unstable; urgency=low
 
-  * Only use dpkg from the chroot, as there is no guarantee dpkg is 
+  * Only use dpkg from the chroot, as there is no guarantee dpkg is
     available outside of the chroot (d-i installation for example).
 
  -- Aurelien Jarno <aurel32@debian.org>  Wed, 23 Sep 2009 11:37:01 +0200
@@ -1352,7 +1358,7 @@ debootstrap (0.2.43) unstable; urgency=high
 debootstrap (0.2.42) unstable; urgency=high
 
   * Acknowledge NMUs. (Closes: #262137, #262165, #262178, #262375)
-  * [sarge] Switch to libgnutls11 so exim4 can switch. (Closes: #268325) 
+  * [sarge] Switch to libgnutls11 so exim4 can switch. (Closes: #268325)
   * [sid] Removed "gcc-3.0-base" and "libstdc++3" for HPPA as they have been
     removed from sid. (Closes: #268049)
   * [Makefile] Make the regular video devices on all archs. (Closes: #265081)
@@ -1391,7 +1397,7 @@ debootstrap (0.2.41) unstable; urgency=high
     systems (e.g. #212646) and there is a consensus it is no longer needed in
     a base environment.
   * [sarge, sid] Removed aboot, aboot-base, elilo, efibootmgr, silo, dvhtool,
-    delo, palo, vmelilo. As per the consensus reached in the thread starting 
+    delo, palo, vmelilo. As per the consensus reached in the thread starting
     with http://lists.debian.org/debian-boot/2004/04/msg00634.html, the
     installation of boot loaders is now debian-installer's responsibility.
     (Closes: #247906)
@@ -1434,7 +1440,7 @@ debootstrap (0.2.39) unstable; urgency=medium
   * [woody.buildd] Install libperl5.6. Thanks Rene Engelhard. (Closes: #251702)
   * [sarge.buildd] Install libc6.1 rather than libc6 on alpha. Thanks Rene
     Engelhard. (Closes: #251703)
-  
+
   Goswin von Brederlow <brederlo@informatik.uni-tuebingen.de>
   * Copy script for sarge to sid
   * Add handling for amd64 to sarge/sid scripts
@@ -1538,7 +1544,7 @@ debootstrap (0.2.29) unstable; urgency=low
 debootstrap (0.2.28) unstable; urgency=medium
 
   * [sid] Exim has changed GnuTLS dependencies. Added libgnutls10, libgcrypt7,
-    libgpg-error0, libopencdk8, libtasn1-2; dropped libgnutls7, libgcrypt1, 
+    libgpg-error0, libopencdk8, libtasn1-2; dropped libgnutls7, libgcrypt1,
     libtasn1-0.
   * [sarge,sid] Dropped lilo, mbr, modconf, libdevmapper1.00 as
     debian-installer handles the bootloader installation and modules
