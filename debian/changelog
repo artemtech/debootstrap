@@ -1,3 +1,9 @@
+debootstrap (1.0.81blankon3) tambora; urgency=medium
+
+  * Fix script BlankOn
+
+ -- Mahyuddin <yudi.al@gmail.com>  Mon, 05 Sep 2016 09:13:49 +0700
+
 debootstrap (1.0.81blankon2) tambora; urgency=medium
 
   * Fix resolve_deps and setup_available to work in the --foreign case
