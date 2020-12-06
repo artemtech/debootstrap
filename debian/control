@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: BlankOn Developers <BlankOn-dev@googlegtoups.com>
 XSBC-Original-Maintainer:Debian Install System Team <debian-boot@lists.debian.org>
-Uploaders: Colin Watson <cjwatson@debian.org>, Steve McIntyre <93sam@debian.org>,
+Uploaders: Rahman Yusri Aftian <fn.aftian@gmail.com>, Colin Watson <cjwatson@debian.org>, Steve McIntyre <93sam@debian.org>,
            Hideki Yamane <henrich@debian.org>,
 Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.5.0
