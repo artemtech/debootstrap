@@ -2,7 +2,7 @@ debootstrap (1.0.123blankon1) verbeek; urgency=medium
 
   * Add verbeek script. 
 
- -- Rahman Yusri Aftian <aftian9603@gmail.com>  Sat, 05 Dec 2020 16:37:19 +0000
+ -- Rahman Yusri Aftian <fn.aftian@gmail.com>  Sat, 05 Dec 2020 16:37:19 +0000
 
 debootstrap (1.0.123) unstable; urgency=medium
 
