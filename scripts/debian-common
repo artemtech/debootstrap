@@ -1,9 +1,3 @@
-mirror_style release
-download_style apt
-finddebs_style from-indices
-variants - buildd fakechroot minbase scratchbox
-keyring /usr/share/keyrings/debian-archive-keyring.gpg
-
 if doing_variant fakechroot; then
 	test "$FAKECHROOT" = "true" || error 1 FAKECHROOTREQ "This variant requires fakechroot environment to be started"
 fi
@@ -22,7 +16,7 @@ work_out_debs () {
 		#required="$required $(get_debs Priority: important)"
 		#  ^^ should be getting debconf here somehow maybe
 		base="$(get_debs Priority: important)"
-	elif doing_variant buildd || doing_variant scratchbox; then
+	elif doing_variant buildd; then
 		base="apt build-essential"
 	elif doing_variant minbase; then
 		base="apt"
@@ -32,9 +26,39 @@ work_out_debs () {
 		# ldd.fake needs binutils
 		required="$required binutils"
 	fi
+
+	case $MIRRORS in
+	    https://*)
+		case "$CODENAME" in
+			# apt-transport-https exists from lenny to stretch
+			lenny|squeeze|wheezy|jessie*|stretch)
+			base="$base apt-transport-https ca-certificates"
+			;;
+			*)
+			base="$base ca-certificates"
+			;;
+		esac
+		;;
+	esac
 }
 
 first_stage_install () {
+	case "$CODENAME" in
+		# "merged-usr" blacklist for past releases
+		etch*|lenny|squeeze|wheezy|jessie*)
+			[ -z "$MERGED_USR" ] && MERGED_USR="no"
+			;;
+		*)
+			# see https://bugs.debian.org/838388
+			EXTRACT_DEB_TAR_OPTIONS="$EXTRACT_DEB_TAR_OPTIONS -k"
+			;;
+	esac
+
+	if [ "$CODENAME" = "stretch" ] && [ -z "$MERGED_USR" ]; then
+		MERGED_USR="no"
+	fi
+		
+	setup_merged_usr
 	extract $required
 
 	mkdir -p "$TARGET/var/lib/dpkg"
@@ -47,10 +71,22 @@ first_stage_install () {
 		chown 0:0 "$TARGET/etc/fstab"; chmod 644 "$TARGET/etc/fstab"
 	fi
 
+	setup_devices
+
+	if doing_variant fakechroot || [ "$CONTAINER" = "docker" ]; then
+		setup_proc_symlink
+	fi
+}
+
+second_stage_install () {
+	in_target /bin/true
+
+	setup_dynamic_devices
+
 	x_feign_install () {
 		local pkg="$1"
 		local deb="$(debfor $pkg)"
-		local ver="$(extract_deb_field "$TARGET/$deb" Version)"
+		local ver="$(in_target dpkg-deb -f "$deb" Version)"
 
 		mkdir -p "$TARGET/var/lib/dpkg/info"
 
@@ -64,10 +100,6 @@ Status: install ok installed" >> "$TARGET/var/lib/dpkg/status"
 	}
 
 	x_feign_install dpkg
-}
-
-second_stage_install () {
-	setup_devices
 
 	x_core_install () {
 		smallyes '' | in_target dpkg --force-depends --install $(debfor "$@")
@@ -77,11 +109,7 @@ second_stage_install () {
 		baseprog="$(($baseprog + ${1:-1}))"
 	}
 
-	if doing_variant fakechroot; then
-		setup_proc_fakechroot
-	elif doing_variant scratchbox; then
-		true
-	else
+	if ! doing_variant fakechroot; then
 		setup_proc
 		in_target /sbin/ldconfig
 	fi
@@ -98,7 +126,8 @@ second_stage_install () {
 
 	p; progress $baseprog $bases INSTCORE "Installing core packages" #2
 	ln -sf mawk "$TARGET/usr/bin/awk"
-	x_core_install base-files base-passwd
+	x_core_install base-passwd
+	x_core_install base-files
 	p; progress $baseprog $bases INSTCORE "Installing core packages" #3
 	x_core_install dpkg
 
@@ -139,6 +168,11 @@ second_stage_install () {
 
 	info CONFREQ "Configuring required packages..."
 
+	echo \
+"#!/bin/sh
+exit 101" > "$TARGET/usr/sbin/policy-rc.d"
+	chmod 755 "$TARGET/usr/sbin/policy-rc.d"
+
 	mv "$TARGET/sbin/start-stop-daemon" "$TARGET/sbin/start-stop-daemon.REAL"
 	echo \
 "#!/bin/sh
@@ -172,19 +206,22 @@ echo \"Warning: Fake start-stop-daemon called, doing nothing\"" > "$TARGET/sbin/
 		done_predeps="$done_predeps $predep"
 	done
 
-	smallyes '' |
-		(repeatn 5 in_target_failmsg INST_BASE_FAIL_FIVE "Failure while installing base packages.  This will be re-attempted up to five times." "" \
-		dpkg --status-fd 8 --force-overwrite --force-confold --skip-same-version --unpack $(debfor $base) 8>&1 1>&7 || echo EXITCODE $?) |
-		dpkg_progress $baseprog $bases UNPACKBASE "Unpacking base system" UNPACKING
+	if [ -n "$base" ]; then
+		smallyes '' |
+			(repeatn 5 in_target_failmsg INST_BASE_FAIL_FIVE "Failure while installing base packages.  This will be re-attempted up to five times." "" \
+			dpkg --status-fd 8 --force-overwrite --force-confold --skip-same-version --unpack $(debfor $base) 8>&1 1>&7 || echo EXITCODE $?) |
+			dpkg_progress $baseprog $bases UNPACKBASE "Unpacking base system" UNPACKING
 
-	info CONFBASE "Configuring the base system..."
+		info CONFBASE "Configuring the base system..."
 
-	smallyes '' |
-		(repeatn 5 in_target_failmsg CONF_BASE_FAIL_FIVE "Failure while configuring base packages.  This will be re-attempted up to five times." "" \
-		dpkg --status-fd 8 --force-confold --skip-same-version --configure -a 8>&1 1>&7 || echo EXITCODE $?) |
-		dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING
+		smallyes '' |
+			(repeatn 5 in_target_failmsg CONF_BASE_FAIL_FIVE "Failure while configuring base packages.  This will be re-attempted up to five times." "" \
+			dpkg --status-fd 8 --force-confold --skip-same-version --configure -a 8>&1 1>&7 || echo EXITCODE $?) |
+			dpkg_progress $baseprog $bases CONFBASE "Configuring base system" CONFIGURING
+	fi
 
 	mv "$TARGET/sbin/start-stop-daemon.REAL" "$TARGET/sbin/start-stop-daemon"
+	rm -f "$TARGET/usr/sbin/policy-rc.d"
 
 	progress $bases $bases CONFBASE "Configuring base system"
 	info BASESUCCESS "Base system installed successfully."
