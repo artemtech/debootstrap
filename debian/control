@@ -1,7 +1,7 @@
 Source: debootstrap
 Section: admin
 Priority: optional
-Maintainer: BlankOn Developers <BlankOn-dev@googlegtoups.com>
+Maintainer: Rahman Yusri Aftian <fn.aftian@gmail.com>
 XSBC-Original-Maintainer:Debian Install System Team <debian-boot@lists.debian.org>
 Uploaders: Rahman Yusri Aftian <fn.aftian@gmail.com>
 XSBC-Original-Uploaders: Colin Watson <cjwatson@debian.org>, Steve McIntyre <93sam@debian.org>, Hideki Yamane <henrich@debian.org>
