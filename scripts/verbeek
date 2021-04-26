@@ -12,4 +12,5 @@ elif [ -e /debootstrap/debian-common ]; then
 elif [ -e "$DEBOOTSTRAP_DIR/debian-common" ]; then
  . "$DEBOOTSTRAP_DIR/debian-common"
 else
- e
+ error 1 NOCOMMON "File not found: debian-common"
+fi
